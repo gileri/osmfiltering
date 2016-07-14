@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version="0.6" generator="osmconvert 0.7T" timestamp="2016-07-09T00:29:02Z">
+	<bounds minlat="43.038" minlon="4.905" maxlat="43.554" maxlon="5.776"/>
+	<node id="5536052" lat="43.553471" lon="5.4357619" version="5" timestamp="2013-08-24T22:31:05Z" changeset="17491463" uid="822650" user="172sp">
+		<tag k="ref" v="10"/>
+		<tag k="exit_to" v="Puyricard"/>
+		<tag k="highway" v="motorway_junction"/>
+		<tag k="website" v="mauvéçith€.fr"/>
+	</node>
+    <way id="2682531" version="3" timestamp="2012-08-01T10:32:56Z" changeset="12572462" uid="138059" user="Truchin">
+		<nd ref="12116512"/>
+		<nd ref="1846672198"/>
+		<nd ref="1846672613"/>
+		<nd ref="1846672196"/>
+		<nd ref="12116517"/>
+		<nd ref="12116518"/>
+		<nd ref="12116519"/>
+		<nd ref="12116520"/>
+		<tag k="highway" v="service"/>
+		<tag k="motor_vehicle" v="private"/>
+		<tag k="website" v="mauvéçith€.fr"/>
+	</way>
+	<relation id="7390" version="218" timestamp="2016-05-08T16:36:43Z" changeset="39184525" uid="390314" user="Sardon29">
+		<member type="way" ref="48886401" role="outer"/>
+		<member type="way" ref="229730180" role="outer"/>
+		<member type="way" ref="53577301" role="outer"/>
+		<member type="way" ref="36891407" role="outer"/>
+		<member type="way" ref="40812902" role="outer"/>
+		<member type="way" ref="362660191" role="outer"/>
+		<member type="way" ref="377364823" role="outer"/>
+		<member type="way" ref="377364817" role="outer"/>
+		<tag k="admin_level" v="6"/>
+		<tag k="border_type" v="departement"/>
+		<tag k="website" v="mauvéçith€.fr"/>
+	</relation>
+</osm>

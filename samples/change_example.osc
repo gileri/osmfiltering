@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osmChange version="0.6" generator="Osmosis 0.44.1">
+  <modify>
+    <node id="820096071" version="1" timestamp="2010-07-16T05:44:55Z" uid="49047" user="vincent_95" changeset="5232111" lat="48.9238362" lon="2.257872">
+      <tag k="name" v="Mômes Chics"/>
+      <tag k="shop" v="clothes"/>
+      <tag k="source" v="CHANGED"/>
+    </node>
+  </modify>
+</osmChange>
