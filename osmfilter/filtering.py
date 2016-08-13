@@ -4,7 +4,7 @@ from threading import Thread
 from queue import Queue
 
 from .entities import Node, Way, Relation
-from .writing import Writer
+from .writing import OSCWriter
 from .parsing import parse
 
 
@@ -48,7 +48,7 @@ class Worker(Thread):
 
 def run(input_file, output_file, filters=(), threads=4):
     logging.info("Starting")
-    writer = Writer(output_file)
+    writer = OSCWriter(output_file)
     writer.initialize_document()
 
     in_queue = Queue(maxsize=300)
