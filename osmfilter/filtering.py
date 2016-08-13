@@ -7,25 +7,30 @@ from .entities import Node, Way, Relation
 from .writing import OSCWriter
 from .parsing import parse
 
+class FilteringModifier():
+    noop = 0
+    discard = 1
+    modified = 2
+    skip = 4
 
 def act(actions, item):
     # TODO Pre-process actions to only call what's callable
     # TODO Allow deletion of entities
 
+    state = FilteringModifier.noop
     for action in actions:
-        if item is False:
-            # Deletion requested
-            return False
-        if item is True:
-            # No action made by filter
-            continue
-        item = getattr(action, item.__class__.__name__.lower())(item)
+        if state & FilteringModifier.skip:
+            break
+        elif state & FilteringModifier.discard:
+            return (item,state)
+        item, state = getattr(action, item.__class__.__name__.lower())(item, state)
 
-    return item
+    return (item, state)
 
 
 class Worker(Thread):
     # TODO use a single thread for writing files
+
     def __init__(self, in_queue, writer, filters=()):
         super().__init__()
         self.in_queue = in_queue
@@ -39,10 +44,10 @@ class Worker(Thread):
             if input_item is None:
                 break
 
-            output_item = act(self.filters, input_item)
+            output_item, state = act(self.filters, input_item)
 
-            if not isinstance(output_item, bool):
-                # TODO allow deletion
+            # TODO allow deletion
+            if not (state & FilteringModifier.discard):
                 self.writer.write(output_item)
 
 
