@@ -51,7 +51,7 @@ class Worker(Thread):
                 self.writer.write(output_item)
 
 
-def run(input_file, output_file, filters=(), threads=4):
+def run(input_file, output_file, filters=(), threads=4, finalize_xml=True):
     logging.info("Starting")
     writer = OSCWriter(output_file)
     writer.initialize_document()
@@ -74,5 +74,6 @@ def run(input_file, output_file, filters=(), threads=4):
     for w in workers:
         w.join()
 
-    writer.finalize_document()
-    logging.info("Terminating")
+    if finalize_xml:
+        writer.finalize_document()
+        logging.info("Finalized XML")
