@@ -31,10 +31,9 @@ def act(actions, item):
 class Worker(Thread):
     # TODO use a single thread for writing files
 
-    def __init__(self, in_queue, writer, filters=()):
+    def __init__(self, in_queue, filters=()):
         super().__init__()
         self.in_queue = in_queue
-        self.writer = writer
         self.filters = filters
 
     def run(self):
@@ -44,19 +43,23 @@ class Worker(Thread):
             if input_item is None:
                 break
 
-            output_item, state = act(self.filters, input_item)
+            # TODO Pre-process actions to only call what's callable
+            # TODO Allow deletion of entities
 
-            # TODO allow deletion
-            if not (state & FilteringModifier.discard):
-                self.writer.write(output_item)
+            for action in self.filters:
+                if "discard" in tags:
+                    continue
+                item, tags = getattr(action, item.__class__.__name__.lower())(item, tags)
 
 
 def run(input_file, output_file, filters=(), threads=4, finalize_xml=True):
     logging.info("Starting")
-    writer = OSCWriter(output_file)
-    writer.initialize_document()
 
     in_queue = Queue(maxsize=300)
+
+    reader = Reader(input_file, in_queue)
+    logging.info("Started parsing")
+    reader.start()
 
     workers = []
     for i in range(threads):
@@ -73,7 +76,3 @@ def run(input_file, output_file, filters=(), threads=4, finalize_xml=True):
 
     for w in workers:
         w.join()
-
-    if finalize_xml:
-        writer.finalize_document()
-        logging.info("Finalized XML")
