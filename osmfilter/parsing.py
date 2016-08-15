@@ -1,5 +1,13 @@
+from threading import Thread
+
 from .compat import etree
 from .entities import Node, Way, Relation
+
+
+def xml_node_cleanup(elem):
+    elem.clear()
+    while elem.getprevious() is not None:
+        del elem.getparent()[0]
 
 
 def parse(fp):
@@ -20,14 +28,20 @@ def parse(fp):
             nodes = [n.get('ref') for n in elem if n.tag == 'nd']
             e = Way(osmid, tags, version, nodes)
         elif elem.tag == 'relation':
-            members = [(m.get('type'), m.get('ref'), m.get('role')) for m in elem if m.tag == 'member']
+            members = [(m.get('type'), m.get('ref'), m.get('role'))
+                       for m in elem if m.tag == 'member']
             e = Relation(osmid, tags, version, members)
 
         xml_node_cleanup(elem)
         yield e
 
 
-def xml_node_cleanup(elem):
-    elem.clear()
-    while elem.getprevious() is not None:
-        del elem.getparent()[0]
+class Reader(Thread):
+    def __init__(self, fp, queue):
+        super().__init__()
+        self.fp = fp
+        self.queue = queue
+
+    def run(self):
+        for item in parse(self.fp):
+            self.queue.put(item)
