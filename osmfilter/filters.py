@@ -1,33 +1,28 @@
-from .filtering import FilteringModifier
-
 class BaseFilter():
     def __init__(self):
         pass
 
-    def node(self, node, flags):
-        return (node, FilteringModifier.noop)
+    def node(self, node, tags):
+        return (node, ())
 
-    def way(self, way, flags):
-        return (way, FilteringModifier.noop)
+    def way(self, way, tags):
+        return (way, ())
 
-    def relation(self, relation, flags):
-        return (relation, FilteringModifier.noop)
+    def relation(self, relation, tags):
+        return (relation, ())
 
 
 class VersionIncrementor(BaseFilter):
-    def increment_version(self, e, flags):
-
-        if flags & FilteringModifier.modified:
+    def increment_version(self, e, tags):
+        if "modified" in tags:
             e.version += 1
-            return (e, FilteringModifier.modified)
-        else:
-            return (e, FilteringModifier.noop)
+        return (e, tags)
 
-    def node(self, e, flags):
-        return self.increment_version(e, flags)
+    def node(self, e, tags):
+        return self.increment_version(e, tags)
 
-    def way(self, e, flags):
-        return self.increment_version(e, flags)
+    def way(self, e, tags):
+        return self.increment_version(e, tags)
 
-    def relation(self, e, flags):
-        return self.increment_version(e, flags)
+    def relation(self, e, tags):
+        return self.increment_version(e, tags)

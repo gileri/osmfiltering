@@ -3,29 +3,7 @@ import logging
 from threading import Thread
 from queue import Queue
 
-from .entities import Node, Way, Relation
-from .writing import OSCWriter
-from .parsing import parse
-
-class FilteringModifier():
-    noop = 0
-    discard = 1
-    modified = 2
-    skip = 4
-
-def act(actions, item):
-    # TODO Pre-process actions to only call what's callable
-    # TODO Allow deletion of entities
-
-    state = FilteringModifier.noop
-    for action in actions:
-        if state & FilteringModifier.skip:
-            break
-        elif state & FilteringModifier.discard:
-            return (item,state)
-        item, state = getattr(action, item.__class__.__name__.lower())(item, state)
-
-    return (item, state)
+from .parsing import Reader
 
 
 class Worker(Thread):
@@ -38,9 +16,10 @@ class Worker(Thread):
 
     def run(self):
         while True:
-            input_item = self.in_queue.get()
+            tags = []
+            item = self.in_queue.get()
 
-            if input_item is None:
+            if item is None:
                 break
 
             # TODO Pre-process actions to only call what's callable
@@ -62,16 +41,15 @@ def run(input_file, output_file, filters=(), threads=4, finalize_xml=True):
     reader.start()
 
     workers = []
-    for i in range(threads):
-        t = Worker(in_queue, writer, filters)
+    for _ in range(threads):
+        t = Worker(in_queue, filters)
         workers.append(t)
         t.start()
 
-    for i in parse(input_file):
-        in_queue.put(i)
+    reader.join()
     logging.info("Finished parsing")
 
-    for i in range(len(workers)):
+    for _ in range(len(workers)):
         in_queue.put(None)
 
     for w in workers:
